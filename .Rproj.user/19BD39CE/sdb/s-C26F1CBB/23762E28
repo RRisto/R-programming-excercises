@@ -1,0 +1,17 @@
+{
+    "contents" : "setwd(\"C://Users//risto//Documents//Minu asjad//Statistika, mudelid, excel//R//Coursera//courses-master//02_RProgramming//homework/data\")\n\nrankall <- function(outcome, num = \"best\") {\n    andmed=read.csv(\"outcome-of-care-measures.csv\")\n    \n    library(plyr)\n    if (!outcome %in% c(\"heart attack\", \"heart failure\", \"pneumonia\")) {\n        stop(\"invalid outcome\")\n    }\n    states=data.frame(unique(andmed$State))\n    names(states)=\"state\"\n    andmed2=rename(andmed, c(\"Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack\"=\"heart attack\",\n                             \"Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure\"=\"heart failure\",\n                             \"Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia\"=\"pneumonia\"))\n    variables=c(\"Hospital.Name\", \"State\", outcome)\n    andmed2=andmed2[variables]\n    andmed3=andmed2[ which(andmed2[,3]!=\"Not Available\"),]\n    #nimetan kolmanda veeru ümber, siis on lihtsam sellele viidata\n    names(andmed3)=c(\"hospital\", \"state\", \"data\")\n    andmed3[,3]=as.numeric(as.character(andmed3[,3]))\n    #sordime\n    newdata <- andmed3[order(andmed3[,3], andmed3[,1]),]\n    #arvutame järgu juurde iga maakonna lõikes\n    newdata=ddply(newdata, .(state), transform, rank = rank(state, ties.method=\"first\"))\n    \n    if (num==\"best\") {\n         tulem=subset(newdata, rank==1, select=c(hospital, state))  \n    }\n    else if (num <=max(newdata$rank)) {\n        tulem=subset(newdata, rank==num, select=c(hospital, state))\n        tulem=merge(tulem,states, by=\"state\", all=T)\n        tulem=tulem[, c(2,1)]\n    }\n    else if (num==\"worst\") { #sellega on jama, kuna minu puhul peab v-d ja W-d \n        #võrdväärseks, muidu loogika on ok\n        newdata=andmed3[order(andmed3$state, andmed3$data, decreasing =T),]\n        newdata=ddply(newdata, .(state), transform, rank = rank(state, ties.method=\"first\"))\n        tulem=subset(newdata, rank==1, select=c(hospital, state))\n        tulem=merge(states,tulem, by=\"state\", all=T)\n        tulem=tulem[, c(2,1)]\n    }\n    else if (num >max(newdata$rank)) {\n        tulem= NA\n    }\n tulem   \n}",
+    "created" : 1428763549964.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "188738170",
+    "id" : "23762E28",
+    "lastKnownWriteTime" : 1428774986,
+    "path" : "~/Minu asjad/Statistika, mudelid, excel/R/Coursera/courses-master/02_RProgramming/homework/minu_rankall.R",
+    "project_path" : "minu_rankall.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

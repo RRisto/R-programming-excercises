@@ -1,0 +1,17 @@
+{
+    "contents" : "setwd(\"C://Users//risto//Documents//Minu asjad//Statistika, mudelid, excel//R//Coursera//courses-master//02_RProgramming//homework\")\n\nrankhospital <- function(state, outcome, num = \"best\") {\n    ## Read outcome data\n    outcomedata <- read.csv(\"./data/outcome-of-care-measures.csv\", colClasses = \"character\")\n    outcomedata[, 11] <- as.numeric(outcomedata[, 11])\n    outcomedata[, 17] <- as.numeric(outcomedata[, 17])\n    outcomedata[, 23] <- as.numeric(outcomedata[, 23])\n    ## Check that state and outcome are valid\n    if (outcome==\"heart attack\"){\n        outcome.number<-11\n    }else if(outcome==\"heart failure\"){\n        outcome.number<-17\n    }else if(outcome==\"pneumonia\"){\n        outcome.number<-23\n    }else{\n        stop(\"invalid outcome\")\n    }\n    #Create array of states\n    tempState <- data.frame(table(outcomedata$State))\n    tempState<- sapply(tempState, as.character)\n    #Test is state parameter is in table\n    if(!(state %in% tempState)){\n        stop(\"invalid state\")\n    }\n    ## Return hospital name in that state with lowest 30-day death\n    ## rate\n    outcomeTemp<-subset(outcomedata, State == state)\n    outcomeTemp<-subset(outcomeTemp, outcomeTemp[,outcome.number] != \"Not Available\")\n    outcomeTemp<-outcomeTemp[order(outcomeTemp[,outcome.number], outcomeTemp[,\"Hospital.Name\"], na.last = TRUE),]\n    #check if best, worst, or an integer and that the num isn't greater than the number of rows\n    if (num == \"best\"){\n        return(outcomeTemp[1,\"Hospital.Name\"])\n    }else if (num == \"worst\"){\n        return(outcomeTemp[nrow(outcomeTemp), \"Hospital.Name\"])\n    }else if (num > nrow(outcomeTemp)){\n        return(NA)\n    }else{\n        return(outcomeTemp[num,\"Hospital.Name\"])\n    }\n}\n# tests\nrankhospital(\"MN\", \"heart attack\", 5000)\nrankhospital(\"MD\", \"heart attack\", \"worst\")\nrankhospital(\"TX\", \"heart failure\", 4)",
+    "created" : 1427641689093.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "488612982",
+    "id" : "4DBA2EED",
+    "lastKnownWriteTime" : 1427642332,
+    "path" : "~/Minu asjad/Statistika, mudelid, excel/R/Coursera/courses-master/02_RProgramming/homework/rankhospital.R",
+    "project_path" : "rankhospital.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

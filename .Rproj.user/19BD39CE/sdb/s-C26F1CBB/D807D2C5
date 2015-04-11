@@ -1,0 +1,17 @@
+{
+    "contents" : "setwd(\"C://Users//risto//Documents//Minu asjad//Statistika, mudelid, excel//R//Coursera//courses-master//02_RProgramming//homework/data\")\n\nbest <- function(state, outcome) {\n    andmed=read.csv(\"outcome-of-care-measures.csv\")\n    library(plyr)\n    if (!outcome %in% c(\"heart attack\", \"heart failure\", \"pneumonia\")) {\n        stop(\"invalid outcome\")\n    }\n    if (!state %in% andmed$State) {\n        stop(\"invalid state\")\n    }\n    andmed2=rename(andmed, c(\"Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack\"=\"heart attack\",\n                     \"Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure\"=\"heart failure\",\n                     \"Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia\"=\"pneumonia\"))\n    variables=c(\"Hospital.Name\", \"State\", outcome)\n    #jätamr alles ainult variabled mida vaja\n    andmed2=andmed2[variables]\n    #valime vajaliku maakonna\n    andmed2=subset(andmed2, State==state)\n    #eemaldame puuduvad andmed\n    andmed3=andmed2[ which(andmed2[,3]!=\"Not Available\"),]\n    #teeme numbrid numericuks\n    andmed3[,3]=as.numeric(as.character(andmed3[,3]))\n    andmed3$Hospital.Name=as.character(andmed3$Hospital.Name)\n    #sordime\n    newdata <- andmed3[order(andmed3[,3], andmed3[,1]),] \n    newdata[1,1]\n}",
+    "created" : 1428748092614.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2169327984",
+    "id" : "D807D2C5",
+    "lastKnownWriteTime" : 1428763066,
+    "path" : "~/Minu asjad/Statistika, mudelid, excel/R/Coursera/courses-master/02_RProgramming/homework/minu_best.R",
+    "project_path" : "minu_best.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
